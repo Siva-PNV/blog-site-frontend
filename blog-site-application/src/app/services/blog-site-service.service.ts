@@ -16,7 +16,8 @@ const httpOptions1 = {
 })
 export class BlogSiteServiceService {
 
-  private readonly baseUrl = 'http://localhost:8080/api/v1.0/blogsite/users'
+  private readonly baseUrl = 'http://localhost:8080/api/v1.0/blogsite/users';
+  private readonly blogUrl = 'http://localhost:8080/api/v1.0/blogsite/blogs';
   loggedIn: boolean;
   constructor(private httpClient: HttpClient) { }
 
@@ -26,11 +27,9 @@ export class BlogSiteServiceService {
 
   public storeUserData(
     username: string,
-    firstName: string,
     authorization: string
   ) {
     localStorage.setItem("loginId", username);
-    localStorage.setItem("firstName", firstName);
     localStorage.setItem("authorization", authorization);
   }
 
@@ -49,5 +48,24 @@ export class BlogSiteServiceService {
   public isLoggedIn() {
     if (localStorage.getItem("loginId")) return (this.loggedIn = true);
     return (this.loggedIn = false);
+  }
+
+  public saveBlogdetails(blogDetails: any): Observable<any> {
+    const blog = {
+      article: blogDetails.article,
+      authorName: blogDetails.authorName,
+      category: blogDetails.category,
+    }
+    const token = localStorage.getItem("authorization");
+    return this.httpClient.post(`${this.baseUrl}/blogs/add/${blogDetails.blogName}`, blog, {
+      headers: {
+        Authorization: token,
+        userName: localStorage.getItem("loginId"),
+      },
+    });
+  }
+
+  public getAllBlogs(): Observable<any> {
+    return this.httpClient.get(`${this.baseUrl}/getall`);
   }
 }

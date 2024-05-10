@@ -44,8 +44,7 @@ export class LoginComponent implements OnInit {
           (token) => {
             authorization = token.jwttoken;
             this.blogSiteServiceService.storeUserData(
-              data.loginId,
-              data.firstName,
+              data.userName,
               authorization
             );
             this.router.navigateByUrl('/home');

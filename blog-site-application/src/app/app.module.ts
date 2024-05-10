@@ -10,13 +10,16 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RegisterComponent } from './components/register/register.component';
 import { BlogDashboardComponent } from './components/blog-dashboard/blog-dashboard.component';
+import { AddBlogsComponent } from './components/add-blogs/add-blogs.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    BlogDashboardComponent
+    BlogDashboardComponent,
+    AddBlogsComponent
   ],
   imports: [
     BrowserModule,
@@ -24,6 +27,8 @@ import { BlogDashboardComponent } from './components/blog-dashboard/blog-dashboa
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    CommonModule
+
   ],
   providers: [HttpClientModule],
   bootstrap: [AppComponent],
