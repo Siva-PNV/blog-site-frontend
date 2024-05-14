@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BlogSiteServiceService } from 'src/app/services/blog-site-service.service';
 
 @Component({
@@ -12,7 +13,7 @@ export class BlogDashboardComponent implements OnInit {
   blog: FormGroup;
   displayStyle = "none";
   allBlogs: [] = [];
-  constructor(private fb: FormBuilder, private blogSiteService: BlogSiteServiceService) { }
+  constructor(private fb: FormBuilder, private blogSiteService: BlogSiteServiceService, private _router: Router) { }
 
   ngOnInit() {
     this.blog = this.fb.group(
@@ -51,6 +52,11 @@ export class BlogDashboardComponent implements OnInit {
 
   closePopup() {
     this.displayStyle = "none";
+  }
+
+  logOut() {
+    this.blogSiteService.logout();
+    this._router.navigate(['/login']);
   }
 
 }

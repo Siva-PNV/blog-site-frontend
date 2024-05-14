@@ -33,6 +33,11 @@ export class BlogSiteServiceService {
     localStorage.setItem("authorization", authorization);
   }
 
+  public logout() {
+    localStorage.removeItem("loginId");
+    localStorage.removeItem("authorization");
+  }
+
   public getToken() {
     return this.httpClient
       .get(`${this.baseUrl}/jwt/authentication`)

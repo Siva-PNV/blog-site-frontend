@@ -12,6 +12,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { BlogDashboardComponent } from './components/blog-dashboard/blog-dashboard.component';
 import { AddBlogsComponent } from './components/add-blogs/add-blogs.component';
 import { CommonModule } from '@angular/common';
+import { routes } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,6 @@ import { CommonModule } from '@angular/common';
     ReactiveFormsModule,
     HttpClientModule,
     CommonModule
-
   ],
   providers: [HttpClientModule],
   bootstrap: [AppComponent],
