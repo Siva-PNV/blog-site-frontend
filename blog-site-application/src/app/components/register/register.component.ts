@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BlogSiteServiceService } from '../../services/blog-site-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ export class RegisterComponent implements OnInit {
   UserRegister: FormGroup;
   submitted = false;
   message: string;
-  constructor(private fb: FormBuilder, private blogSiteServiceService: BlogSiteServiceService) { }
+  constructor(private fb: FormBuilder, private blogSiteServiceService: BlogSiteServiceService, private _router: Router) { }
 
   ngOnInit(): void {
     this.UserRegister = this.fb.group(
@@ -40,25 +41,23 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    var userInfo = {
-      firstName: this.UserRegister.value.firstName,
-      lastName: this.UserRegister.value.lastName,
-      loginId: this.UserRegister.value.username,
-      emailId: this.UserRegister.value.email,
-      contactNo: this.UserRegister.value.contactNumber,
-      password: this.UserRegister.value.password,
-    };
+    // var userInfo = {
+    //   userName: this.UserRegister.value.userName,
+    //   emailId: this.UserRegister.value.emailId,
+    //   password: this.UserRegister.value.password,
+    // };
 
-    this.blogSiteServiceService.register(userInfo).subscribe(
+    this.blogSiteServiceService.register(this.UserRegister.value).subscribe(
       (data) => {
-        if (data.id == null) {
-          this.message = 'User already exist';
-        } else {
-          this.message = 'detais saved';
-        }
+        this._router.navigateByUrl('/login', { state: { message: "User details saved successfully, please login to continue" } });
       },
       (err) => {
-        console.log(err.message);
+        console.log(err);
+        if (err.status == 409) {
+          this.message = "User already exists with user name";
+        }
+        // this.message = err.message;
+        //console.log(err.message);
       }
     );
   }

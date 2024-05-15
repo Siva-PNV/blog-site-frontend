@@ -5,23 +5,17 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RegisterComponent } from './components/register/register.component';
 import { BlogDashboardComponent } from './components/blog-dashboard/blog-dashboard.component';
-import { AddBlogsComponent } from './components/add-blogs/add-blogs.component';
 import { CommonModule } from '@angular/common';
-import { routes } from './app-routing.module';
+import { ViewBlogsComponent } from './components/view-blogs/view-blogs.component';
+import { DateFormatPipe } from './pipes/date-pipe/date-format.pipe';
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { ViewMyBlogsComponent } from './components/view-my-blogs/view-my-blogs.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    RegisterComponent,
-    BlogDashboardComponent,
-    AddBlogsComponent
-  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -29,6 +23,16 @@ import { routes } from './app-routing.module';
     ReactiveFormsModule,
     HttpClientModule,
     CommonModule
+  ],
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    RegisterComponent,
+    BlogDashboardComponent,
+    ViewBlogsComponent,
+    DateFormatPipe,
+    NavBarComponent,
+    ViewMyBlogsComponent
   ],
   providers: [HttpClientModule],
   bootstrap: [AppComponent],

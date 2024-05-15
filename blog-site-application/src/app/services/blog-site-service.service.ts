@@ -1,7 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from "rxjs/operators";
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from "rxjs/operators";
+import { LoginCredentials } from '../modals/login-credentials.interface';
+import { RegisterUser } from '../modals/register-user.interface';
+import { Blogs, CreateBlog } from '../modals/blogs.interface';
 
 const httpOptions1 = {
   headers: new HttpHeaders({
@@ -15,14 +18,14 @@ const httpOptions1 = {
   providedIn: 'root'
 })
 export class BlogSiteServiceService {
-
   private readonly baseUrl = 'http://localhost:8080/api/v1.0/blogsite/users';
   private readonly blogUrl = 'http://localhost:8080/api/v1.0/blogsite/blogs';
   loggedIn: boolean;
   constructor(private httpClient: HttpClient) { }
 
-  checkUserCredentials(value: any): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}/login`, value);
+  checkUserCredentials(value: LoginCredentials): Observable<any> {
+    return this.httpClient.post(`${this.baseUrl}/login`, value)
+      .pipe(catchError(this._handleError));;
   }
 
   public storeUserData(
@@ -41,21 +44,26 @@ export class BlogSiteServiceService {
   public getToken() {
     return this.httpClient
       .get(`${this.baseUrl}/jwt/authentication`)
-      .pipe(map((data1) => (data1 = JSON.parse(JSON.stringify(data1)))));
+      .pipe(map((data1) => (data1 = JSON.parse(JSON.stringify(data1)))))
+      .pipe(catchError(this._handleError));;
   }
 
-  public register(userInfo: any): Observable<any> {
+  public register(userInfo: RegisterUser): Observable<any> {
     return this.httpClient
       .post(this.baseUrl + "/register", userInfo, httpOptions1)
-      .pipe();
+      .pipe(catchError(this._handleError));
   }
 
   public isLoggedIn() {
-    if (localStorage.getItem("loginId")) return (this.loggedIn = true);
-    return (this.loggedIn = false);
+    if (localStorage.getItem("loginId")) {
+      return true;
+    } else {
+      return false;
+    }
+
   }
 
-  public saveBlogdetails(blogDetails: any): Observable<any> {
+  public saveBlogDetails(blogDetails: CreateBlog): Observable<any> {
     const blog = {
       article: blogDetails.article,
       authorName: blogDetails.authorName,
@@ -67,10 +75,52 @@ export class BlogSiteServiceService {
         Authorization: token,
         userName: localStorage.getItem("loginId"),
       },
-    });
+    }).pipe(catchError(this._handleError));;
   }
 
-  public getAllBlogs(): Observable<any> {
-    return this.httpClient.get(`${this.baseUrl}/getall`);
+  public getAllBlogs(): Observable<Blogs[]> {
+    return this.httpClient.get<Blogs[]>(`${this.baseUrl}/getall`);
+  }
+
+  public searchBlogs(category: string, fromDate: string, toDate: string): Observable<Blogs[]> {
+    return this.httpClient.get<Blogs[]>(`${this.blogUrl}/get/${category}/${fromDate}/${toDate}`)
+      .pipe(catchError(this._handleError));;
+  }
+
+  public searchBlogsByCategory(category: string): Observable<Blogs[]> {
+    return this.httpClient.get<Blogs[]>(`${this.blogUrl}/info/${category}`)
+      .pipe(catchError(this._handleError));;
+  }
+
+  public getMyBlogs(userName: string): Observable<Blogs[]> {
+    return this.httpClient.get<Blogs[]>(`${this.baseUrl}/get/${userName}`)
+      .pipe(catchError(this._handleError));;
+  }
+
+  public deleteBlog(blogName: string): Observable<any> {
+    const token = localStorage.getItem("authorization");
+    return this.httpClient.delete(`${this.baseUrl}/delete/${blogName}`, {
+      headers: {
+        Authorization: token,
+        userName: localStorage.getItem("loginId"),
+      },
+    }).pipe(catchError(this._handleError));
+  }
+
+  private _handleError(error: any) {
+    const err = {} as any;
+    if (error.error instanceof ErrorEvent) {
+      err.message = error.error.message;
+      err.type = error.error.type;
+      err.status = error.error.status;
+    } else {
+      err.message = error.message;
+      err.status = error.response ? error.response.status : error.status;
+      const { data } = error.response ? error.response : error;
+      if (data) {
+        err.data = data;
+      }
+    }
+    return throwError(err);
   }
 }

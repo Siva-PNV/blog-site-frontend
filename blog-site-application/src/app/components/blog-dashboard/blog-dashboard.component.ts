@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Blogs } from 'src/app/modals/blogs.interface';
 import { BlogSiteServiceService } from 'src/app/services/blog-site-service.service';
 
 @Component({
@@ -12,7 +13,13 @@ export class BlogDashboardComponent implements OnInit {
 
   blog: FormGroup;
   displayStyle = "none";
-  allBlogs: [] = [];
+  allBlogs: Blogs[] = [];
+  search: string;
+  toDate: string;
+  fromDate: string;
+  activetab = 'all-blogs';
+  previousTabName: string;
+
   constructor(private fb: FormBuilder, private blogSiteService: BlogSiteServiceService, private _router: Router) { }
 
   ngOnInit() {
@@ -41,22 +48,49 @@ export class BlogDashboardComponent implements OnInit {
 
   onSubmit() {
     console.log(this.blog.value);
-    this.blogSiteService.saveBlogdetails(this.blog.value).subscribe(() => {
+    this.blogSiteService.saveBlogDetails(this.blog.value).subscribe(() => {
       this.closePopup();
+      this.activetab = this.previousTabName;
     })
   }
 
-  openPopup() {
+  openPopup(tabName: string) {
     this.displayStyle = "block";
+    this.blog.reset();
+    this.previousTabName = this.activetab;
+    this.activetab = tabName;
   }
 
   closePopup() {
+    this.activetab = this.previousTabName
     this.displayStyle = "none";
   }
 
-  logOut() {
-    this.blogSiteService.logout();
-    this._router.navigate(['/login']);
+  searchBlogs() {
+    if (this.search && this.fromDate) {
+      if (!this.toDate) {
+        this.toDate = new Date().toISOString().split('T')[0];
+      }
+      this.blogSiteService.searchBlogs(this.search, this.fromDate, this.toDate).subscribe((data) => {
+        this.allBlogs = data;
+      })
+    }
+    else {
+      this.blogSiteService.searchBlogsByCategory(this.search).subscribe((data) => {
+        console.log(data);
+        this.allBlogs = data;
+      })
+    }
+  }
+
+  openTab(tabName: string) {
+    this.activetab = tabName;
+  }
+
+  refreshData() {
+    this.blogSiteService.getAllBlogs().subscribe((data) => {
+      this.allBlogs = data;
+    })
   }
 
 }

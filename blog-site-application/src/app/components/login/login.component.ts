@@ -13,22 +13,34 @@ export class LoginComponent implements OnInit {
   UserLogin: FormGroup;
   submitted = false;
   invalid: string;
+  message: string;
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private blogSiteServiceService: BlogSiteServiceService
-  ) { }
+    private blogSiteServiceService: BlogSiteServiceService,
+  ) {
+    if (this.router.getCurrentNavigation().extras.state)
+      this.message = this.router.getCurrentNavigation().extras.state.message;
+  }
 
   ngOnInit(): void {
-    this.UserLogin = this.fb.group({
-      userName: [
-        '',
-        [
-          Validators.required,
+    if (localStorage.getItem('loginId')) {
+      this.router.navigateByUrl('/home');
+    } else {
+      this.UserLogin = this.fb.group({
+        userName: [
+          '',
+          [
+            Validators.required,
+          ],
         ],
-      ],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-    });
+        password: ['', [Validators.required, Validators.maxLength(8)]],
+      });
+      //if (this.router.getCurrentNavigation()) {
+
+      console.log(this.message);
+      //  }
+    }
   }
 
   OnSubmit() {

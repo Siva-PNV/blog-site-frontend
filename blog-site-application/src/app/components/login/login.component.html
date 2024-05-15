@@ -1,12 +1,15 @@
 <div class="main">
+
   <div class="container">
+    <div *ngIf="message" style="color: red;font-size: medium;margin-left: 35%;">
+      {{message}}</div>
     <div class="middle text-center">
+
       <div id="login">
         <div>
           <h1 style="
                 font-family: 'Courier New', Courier, monospace;
                 margin-bottom: 5%;
-                color: rgb(115, 111, 111);
               ">
             Sign in
           </h1>
@@ -54,26 +57,22 @@
               {{ invalid }}
             </div>
             <div class="row">
-              <div style="margin-left: 35%">
-                <button class="btn btn-md my-2" style="
-                      background-color: black;
-                      border-color: brown;
-                      border-radius: 10px;
-                    " [disabled]="!UserLogin.valid">
+              <div>
+                <button class="btn btn-md my-2" style="border-radius: 10px;" [disabled]="!UserLogin.valid">
                   Sign in
                 </button>
               </div>
             </div>
-            <div class="row">
-              <div style="margin-left: 25%; margin-bottom: 10%">
+            <!-- <div class="row">
+              <div style="margin-bottom: 10%">
                 <a routerLink="/forgot-password" style="font-size: 15px">Forgot Password?</a>
               </div>
-            </div>
+            </div> -->
             <div class="row">
-              <div style="margin-left: 8%; margin-bottom: 10%">
-                <p style="color: rgb(115, 111, 111)">
-                  Don`t have an account?
-                  <a routerLink="/register" style="font-size: 15px">Sign up</a>
+              <div style="margin-bottom: 10%">
+                <p>
+                  Don`t have account?
+                  <a routerLink="/register" style="font-size: 15px;color: blue;">Sign up</a>
                 </p>
               </div>
             </div>
