@@ -20,7 +20,7 @@ export class BlogDashboardComponent implements OnInit {
   activetab = 'all-blogs';
   previousTabName: string;
 
-  constructor(private fb: FormBuilder, private blogSiteService: BlogSiteServiceService, private _router: Router) { }
+  constructor(private fb: FormBuilder, private blogSiteService: BlogSiteServiceService) { }
 
   ngOnInit() {
     this.blog = this.fb.group(
@@ -41,7 +41,6 @@ export class BlogDashboardComponent implements OnInit {
       },
     );
     this.blogSiteService.getAllBlogs().subscribe((data) => {
-      console.log(data);
       this.allBlogs = data;
     })
   }
@@ -77,7 +76,6 @@ export class BlogDashboardComponent implements OnInit {
     }
     else {
       this.blogSiteService.searchBlogsByCategory(this.search).subscribe((data) => {
-        console.log(data);
         this.allBlogs = data;
       })
     }

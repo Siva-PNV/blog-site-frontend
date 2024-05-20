@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NO_ERRORS_SCHEMA, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,6 +14,7 @@ import { ViewBlogsComponent } from './components/view-blogs/view-blogs.component
 import { DateFormatPipe } from './pipes/date-pipe/date-format.pipe';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { ViewMyBlogsComponent } from './components/view-my-blogs/view-my-blogs.component';
+import { RouterOutlet } from '@angular/router';
 
 @NgModule({
   imports: [
@@ -34,8 +35,16 @@ import { ViewMyBlogsComponent } from './components/view-my-blogs/view-my-blogs.c
     NavBarComponent,
     ViewMyBlogsComponent
   ],
-  providers: [HttpClientModule],
+  exports:[AppComponent,
+    LoginComponent,
+    RegisterComponent,
+    BlogDashboardComponent,
+    ViewBlogsComponent,
+    DateFormatPipe,
+    NavBarComponent,
+    ViewMyBlogsComponent],
+  providers: [HttpClientModule,ReactiveFormsModule,FormsModule,CommonModule,NavBarComponent],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class AppModule { }

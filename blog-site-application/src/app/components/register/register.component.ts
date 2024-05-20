@@ -41,23 +41,14 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    // var userInfo = {
-    //   userName: this.UserRegister.value.userName,
-    //   emailId: this.UserRegister.value.emailId,
-    //   password: this.UserRegister.value.password,
-    // };
-
     this.blogSiteServiceService.register(this.UserRegister.value).subscribe(
       (data) => {
         this._router.navigateByUrl('/login', { state: { message: "User details saved successfully, please login to continue" } });
       },
-      (err) => {
-        console.log(err);
-        if (err.status == 409) {
+      (error) => {
+        if (error.status == 409) {
           this.message = "User already exists with user name";
         }
-        // this.message = err.message;
-        //console.log(err.message);
       }
     );
   }

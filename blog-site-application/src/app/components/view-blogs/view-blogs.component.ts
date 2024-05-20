@@ -14,7 +14,6 @@ export class ViewBlogsComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log("onl=i");
     this.selectedTab.emit();
   }
 

@@ -107,7 +107,7 @@ export class BlogSiteServiceService {
     }).pipe(catchError(this._handleError));
   }
 
-  private _handleError(error: any) {
+  public _handleError(error: any) {
     const err = {} as any;
     if (error.error instanceof ErrorEvent) {
       err.message = error.error.message;

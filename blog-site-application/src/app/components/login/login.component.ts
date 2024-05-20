@@ -19,8 +19,6 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private blogSiteServiceService: BlogSiteServiceService,
   ) {
-    if (this.router.getCurrentNavigation().extras.state)
-      this.message = this.router.getCurrentNavigation().extras.state.message;
   }
 
   ngOnInit(): void {
@@ -46,7 +44,6 @@ export class LoginComponent implements OnInit {
   OnSubmit() {
     this.submitted = true;
     if (this.UserLogin.invalid) {
-      console.log('invalid');
       return;
     }
     let authorization: string;
@@ -67,7 +64,7 @@ export class LoginComponent implements OnInit {
         );
       },
       (error) => {
-        if (error.message.includes('400')) {
+        if (error && error.message.includes('400')) {
           this.invalid = 'Invalid Credentials';
         } else {
           alert(error.message);
