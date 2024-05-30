@@ -2,8 +2,8 @@
   "name": "blog-site-application",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng start",
+    "ng": "set NODE_OPTIONS=--openssl-legacy-provider && ng",
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
