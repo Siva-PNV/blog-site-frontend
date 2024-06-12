@@ -338,7 +338,7 @@ if (content.locals) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/sivapallem1/Documents/FSE/blog-site-frontend/blog-site-application/src/styles.css */"./src/styles.css");
+module.exports = __webpack_require__(/*! /Users/sivapallem1/Documents/FSE/blog-site-frontend/src/styles.css */"./src/styles.css");
 
 
 /***/ })

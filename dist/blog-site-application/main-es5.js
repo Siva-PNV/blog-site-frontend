@@ -191,7 +191,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _classCallCheck(this, AppRoutingModule);
     });
     AppRoutingModule = __decorate([Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"])({
-      imports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"].forRoot(routes)],
+      imports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"].forRoot(routes, {
+        useHash: true
+      })],
       exports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"]]
     })], AppRoutingModule);
 
@@ -450,7 +452,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             blogName: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].maxLength(20)]]
           });
           this.blogSiteService.getAllBlogs().subscribe(function (data) {
-            console.log(data);
             _this.allBlogs = data;
           });
         }
@@ -491,7 +492,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             });
           } else {
             this.blogSiteService.searchBlogsByCategory(this.search).subscribe(function (data) {
-              console.log(data);
               _this3.allBlogs = data;
             });
           }
@@ -604,7 +604,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this5 = this;
           this.submitted = true;
           if (this.UserLogin.invalid) {
-            console.log('invalid');
             return;
           }
           var authorization;
@@ -617,7 +616,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               alert(err.message);
             });
           }, function (error) {
-            if (error.message.includes('400')) {
+            if (error && error.message.includes('400')) {
               _this5.invalid = 'Invalid Credentials';
             } else {
               alert(error.message);
@@ -798,24 +797,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           if (this.UserRegister.invalid) {
             return;
           }
-          // var userInfo = {
-          //   userName: this.UserRegister.value.userName,
-          //   emailId: this.UserRegister.value.emailId,
-          //   password: this.UserRegister.value.password,
-          // };
           this.blogSiteServiceService.register(this.UserRegister.value).subscribe(function (data) {
             _this7._router.navigateByUrl('/login', {
               state: {
                 message: "User details saved successfully, please login to continue"
               }
             });
-          }, function (err) {
-            console.log(err);
-            if (err.status == 409) {
+          }, function (error) {
+            if (error.status == 409) {
               _this7.message = "User already exists with user name";
             }
-            // this.message = err.message;
-            //console.log(err.message);
           });
         }
       }]);
@@ -1086,13 +1077,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       function BlogSiteServiceService(httpClient) {
         _classCallCheck(this, BlogSiteServiceService);
         this.httpClient = httpClient;
-        this.baseUrl = 'http://localhost:8080/api/v1.0/blogsite/users';
-        this.blogUrl = 'http://localhost:8080/api/v1.0/blogsite/blogs';
+        // private readonly baseUrl = 'http://localhost:8080/api/v1.0/blogsite/users';
+        // private readonly blogUrl = 'http://localhost:8080/api/v1.0/blogsite/blogs';
+        this.azureBaseUrl = 'https://blog-site-application.azurewebsites.net/api/v1.0/blogsite/users';
+        this.azureBlogUrl = 'https://blog-site-application.azurewebsites.net/api/v1.0/blogsite/blogs';
       }
       return _createClass(BlogSiteServiceService, [{
         key: "checkUserCredentials",
         value: function checkUserCredentials(value) {
-          return this.httpClient.post("".concat(this.baseUrl, "/login"), value).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
+          return this.httpClient.post("".concat(this.azureBaseUrl, "/login"), value).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
           ;
         }
       }, {
@@ -1110,7 +1103,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "getToken",
         value: function getToken() {
-          return this.httpClient.get("".concat(this.baseUrl, "/jwt/authentication")).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (data1) {
+          return this.httpClient.get("".concat(this.azureBaseUrl, "/jwt/authentication")).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (data1) {
             return data1 = JSON.parse(JSON.stringify(data1));
           })).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
           ;
@@ -1118,7 +1111,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "register",
         value: function register(userInfo) {
-          return this.httpClient.post(this.baseUrl + "/register", userInfo, httpOptions1).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
+          return this.httpClient.post(this.azureBaseUrl + "/register", userInfo, httpOptions1).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
         }
       }, {
         key: "isLoggedIn",
@@ -1138,7 +1131,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             category: blogDetails.category
           };
           var token = localStorage.getItem("authorization");
-          return this.httpClient.post("".concat(this.baseUrl, "/blogs/add/").concat(blogDetails.blogName), blog, {
+          return this.httpClient.post("".concat(this.azureBaseUrl, "/blogs/add/").concat(blogDetails.blogName), blog, {
             headers: {
               Authorization: token,
               userName: localStorage.getItem("loginId")
@@ -1149,31 +1142,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "getAllBlogs",
         value: function getAllBlogs() {
-          return this.httpClient.get("".concat(this.baseUrl, "/getall"));
+          return this.httpClient.get("".concat(this.azureBaseUrl, "/getall"));
         }
       }, {
         key: "searchBlogs",
         value: function searchBlogs(category, fromDate, toDate) {
-          return this.httpClient.get("".concat(this.blogUrl, "/get/").concat(category, "/").concat(fromDate, "/").concat(toDate)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
+          return this.httpClient.get("".concat(this.azureBlogUrl, "/get/").concat(category, "/").concat(fromDate, "/").concat(toDate)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
           ;
         }
       }, {
         key: "searchBlogsByCategory",
         value: function searchBlogsByCategory(category) {
-          return this.httpClient.get("".concat(this.blogUrl, "/info/").concat(category)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
+          return this.httpClient.get("".concat(this.azureBlogUrl, "/info/").concat(category)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
           ;
         }
       }, {
         key: "getMyBlogs",
         value: function getMyBlogs(userName) {
-          return this.httpClient.get("".concat(this.baseUrl, "/get/").concat(userName)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
+          return this.httpClient.get("".concat(this.azureBaseUrl, "/get/").concat(userName)).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
           ;
         }
       }, {
         key: "deleteBlog",
         value: function deleteBlog(blogName) {
           var token = localStorage.getItem("authorization");
-          return this.httpClient["delete"]("".concat(this.baseUrl, "/delete/").concat(blogName), {
+          return this.httpClient["delete"]("".concat(this.azureBaseUrl, "/delete/").concat(blogName), {
             headers: {
               Authorization: token,
               userName: localStorage.getItem("loginId")
@@ -1287,7 +1280,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   /*! no static exports found */
   /***/
   function _(module, exports, __webpack_require__) {
-    module.exports = __webpack_require__( /*! /Users/sivapallem1/Documents/FSE/blog-site-frontend/blog-site-application/src/main.ts */"./src/main.ts");
+    module.exports = __webpack_require__( /*! /Users/sivapallem1/Documents/FSE/blog-site-frontend/src/main.ts */"./src/main.ts");
 
     /***/
   })

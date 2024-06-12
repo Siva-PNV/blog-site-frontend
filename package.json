@@ -2,10 +2,10 @@
   "name": "blog-site-application",
   "version": "0.0.0",
   "scripts": {
-    "ng": "set NODE_OPTIONS=--openssl-legacy-provider && ng",
-    "start": "set NODE_OPTIONS=--openssl-legacy-provider && ng serve",
-    "build": "ng build",
-    "test": "ng test",
+    "ng": "ng",
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts --openssl-legacy-provider build",
+    "test": "jest",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

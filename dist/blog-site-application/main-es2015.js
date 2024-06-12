@@ -157,7 +157,7 @@ let AppRoutingModule = class AppRoutingModule {
 };
 AppRoutingModule = __decorate([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"])({
-        imports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"].forRoot(routes)],
+        imports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"].forRoot(routes, { useHash: true })],
         exports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"]]
     })
 ], AppRoutingModule);
@@ -422,7 +422,6 @@ let BlogDashboardComponent = class BlogDashboardComponent {
             blogName: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].maxLength(20)]],
         });
         this.blogSiteService.getAllBlogs().subscribe((data) => {
-            console.log(data);
             this.allBlogs = data;
         });
     }
@@ -454,7 +453,6 @@ let BlogDashboardComponent = class BlogDashboardComponent {
         }
         else {
             this.blogSiteService.searchBlogsByCategory(this.search).subscribe((data) => {
-                console.log(data);
                 this.allBlogs = data;
             });
         }
@@ -553,7 +551,6 @@ let LoginComponent = class LoginComponent {
     OnSubmit() {
         this.submitted = true;
         if (this.UserLogin.invalid) {
-            console.log('invalid');
             return;
         }
         let authorization;
@@ -566,7 +563,7 @@ let LoginComponent = class LoginComponent {
                 alert(err.message);
             });
         }, (error) => {
-            if (error.message.includes('400')) {
+            if (error && error.message.includes('400')) {
                 this.invalid = 'Invalid Credentials';
             }
             else {
@@ -726,20 +723,12 @@ let RegisterComponent = class RegisterComponent {
         if (this.UserRegister.invalid) {
             return;
         }
-        // var userInfo = {
-        //   userName: this.UserRegister.value.userName,
-        //   emailId: this.UserRegister.value.emailId,
-        //   password: this.UserRegister.value.password,
-        // };
         this.blogSiteServiceService.register(this.UserRegister.value).subscribe((data) => {
             this._router.navigateByUrl('/login', { state: { message: "User details saved successfully, please login to continue" } });
-        }, (err) => {
-            console.log(err);
-            if (err.status == 409) {
+        }, (error) => {
+            if (error.status == 409) {
                 this.message = "User already exists with user name";
             }
-            // this.message = err.message;
-            //console.log(err.message);
         });
     }
 };
@@ -970,11 +959,13 @@ const httpOptions1 = {
 let BlogSiteServiceService = class BlogSiteServiceService {
     constructor(httpClient) {
         this.httpClient = httpClient;
-        this.baseUrl = 'http://localhost:8080/api/v1.0/blogsite/users';
-        this.blogUrl = 'http://localhost:8080/api/v1.0/blogsite/blogs';
+        // private readonly baseUrl = 'http://localhost:8080/api/v1.0/blogsite/users';
+        // private readonly blogUrl = 'http://localhost:8080/api/v1.0/blogsite/blogs';
+        this.azureBaseUrl = 'https://blog-site-application.azurewebsites.net/api/v1.0/blogsite/users';
+        this.azureBlogUrl = 'https://blog-site-application.azurewebsites.net/api/v1.0/blogsite/blogs';
     }
     checkUserCredentials(value) {
-        return this.httpClient.post(`${this.baseUrl}/login`, value)
+        return this.httpClient.post(`${this.azureBaseUrl}/login`, value)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
         ;
     }
@@ -988,14 +979,14 @@ let BlogSiteServiceService = class BlogSiteServiceService {
     }
     getToken() {
         return this.httpClient
-            .get(`${this.baseUrl}/jwt/authentication`)
+            .get(`${this.azureBaseUrl}/jwt/authentication`)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])((data1) => (data1 = JSON.parse(JSON.stringify(data1)))))
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
         ;
     }
     register(userInfo) {
         return this.httpClient
-            .post(this.baseUrl + "/register", userInfo, httpOptions1)
+            .post(this.azureBaseUrl + "/register", userInfo, httpOptions1)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
     }
     isLoggedIn() {
@@ -1013,7 +1004,7 @@ let BlogSiteServiceService = class BlogSiteServiceService {
             category: blogDetails.category,
         };
         const token = localStorage.getItem("authorization");
-        return this.httpClient.post(`${this.baseUrl}/blogs/add/${blogDetails.blogName}`, blog, {
+        return this.httpClient.post(`${this.azureBaseUrl}/blogs/add/${blogDetails.blogName}`, blog, {
             headers: {
                 Authorization: token,
                 userName: localStorage.getItem("loginId"),
@@ -1022,26 +1013,26 @@ let BlogSiteServiceService = class BlogSiteServiceService {
         ;
     }
     getAllBlogs() {
-        return this.httpClient.get(`${this.baseUrl}/getall`);
+        return this.httpClient.get(`${this.azureBaseUrl}/getall`);
     }
     searchBlogs(category, fromDate, toDate) {
-        return this.httpClient.get(`${this.blogUrl}/get/${category}/${fromDate}/${toDate}`)
+        return this.httpClient.get(`${this.azureBlogUrl}/get/${category}/${fromDate}/${toDate}`)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
         ;
     }
     searchBlogsByCategory(category) {
-        return this.httpClient.get(`${this.blogUrl}/info/${category}`)
+        return this.httpClient.get(`${this.azureBlogUrl}/info/${category}`)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
         ;
     }
     getMyBlogs(userName) {
-        return this.httpClient.get(`${this.baseUrl}/get/${userName}`)
+        return this.httpClient.get(`${this.azureBaseUrl}/get/${userName}`)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(this._handleError));
         ;
     }
     deleteBlog(blogName) {
         const token = localStorage.getItem("authorization");
-        return this.httpClient.delete(`${this.baseUrl}/delete/${blogName}`, {
+        return this.httpClient.delete(`${this.azureBaseUrl}/delete/${blogName}`, {
             headers: {
                 Authorization: token,
                 userName: localStorage.getItem("loginId"),
@@ -1146,7 +1137,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_1__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/sivapallem1/Documents/FSE/blog-site-frontend/blog-site-application/src/main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! /Users/sivapallem1/Documents/FSE/blog-site-frontend/src/main.ts */"./src/main.ts");
 
 
 /***/ })

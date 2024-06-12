@@ -18,13 +18,15 @@ const httpOptions1 = {
   providedIn: 'root'
 })
 export class BlogSiteServiceService {
-  private readonly baseUrl = 'http://localhost:8080/api/v1.0/blogsite/users';
-  private readonly blogUrl = 'http://localhost:8080/api/v1.0/blogsite/blogs';
+  // private readonly baseUrl = 'http://localhost:8080/api/v1.0/blogsite/users';
+  // private readonly blogUrl = 'http://localhost:8080/api/v1.0/blogsite/blogs';
+  private readonly azureBaseUrl = 'https://blog-site-application.azurewebsites.net/api/v1.0/blogsite/users';
+  private readonly azureBlogUrl = 'https://blog-site-application.azurewebsites.net/api/v1.0/blogsite/blogs';
   loggedIn: boolean;
   constructor(private httpClient: HttpClient) { }
 
   checkUserCredentials(value: LoginCredentials): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}/login`, value)
+    return this.httpClient.post(`${this.azureBaseUrl}/login`, value)
       .pipe(catchError(this._handleError));;
   }
 
@@ -43,14 +45,14 @@ export class BlogSiteServiceService {
 
   public getToken() {
     return this.httpClient
-      .get(`${this.baseUrl}/jwt/authentication`)
+      .get(`${this.azureBaseUrl}/jwt/authentication`)
       .pipe(map((data1) => (data1 = JSON.parse(JSON.stringify(data1)))))
       .pipe(catchError(this._handleError));;
   }
 
   public register(userInfo: RegisterUser): Observable<any> {
     return this.httpClient
-      .post(this.baseUrl + "/register", userInfo, httpOptions1)
+      .post(this.azureBaseUrl + "/register", userInfo, httpOptions1)
       .pipe(catchError(this._handleError));
   }
 
@@ -70,7 +72,7 @@ export class BlogSiteServiceService {
       category: blogDetails.category,
     }
     const token = localStorage.getItem("authorization");
-    return this.httpClient.post(`${this.baseUrl}/blogs/add/${blogDetails.blogName}`, blog, {
+    return this.httpClient.post(`${this.azureBaseUrl}/blogs/add/${blogDetails.blogName}`, blog, {
       headers: {
         Authorization: token,
         userName: localStorage.getItem("loginId"),
@@ -79,27 +81,27 @@ export class BlogSiteServiceService {
   }
 
   public getAllBlogs(): Observable<Blogs[]> {
-    return this.httpClient.get<Blogs[]>(`${this.baseUrl}/getall`);
+    return this.httpClient.get<Blogs[]>(`${this.azureBaseUrl}/getall`);
   }
 
   public searchBlogs(category: string, fromDate: string, toDate: string): Observable<Blogs[]> {
-    return this.httpClient.get<Blogs[]>(`${this.blogUrl}/get/${category}/${fromDate}/${toDate}`)
+    return this.httpClient.get<Blogs[]>(`${this.azureBlogUrl}/get/${category}/${fromDate}/${toDate}`)
       .pipe(catchError(this._handleError));;
   }
 
   public searchBlogsByCategory(category: string): Observable<Blogs[]> {
-    return this.httpClient.get<Blogs[]>(`${this.blogUrl}/info/${category}`)
+    return this.httpClient.get<Blogs[]>(`${this.azureBlogUrl}/info/${category}`)
       .pipe(catchError(this._handleError));;
   }
 
   public getMyBlogs(userName: string): Observable<Blogs[]> {
-    return this.httpClient.get<Blogs[]>(`${this.baseUrl}/get/${userName}`)
+    return this.httpClient.get<Blogs[]>(`${this.azureBaseUrl}/get/${userName}`)
       .pipe(catchError(this._handleError));;
   }
 
   public deleteBlog(blogName: string): Observable<any> {
     const token = localStorage.getItem("authorization");
-    return this.httpClient.delete(`${this.baseUrl}/delete/${blogName}`, {
+    return this.httpClient.delete(`${this.azureBaseUrl}/delete/${blogName}`, {
       headers: {
         Authorization: token,
         userName: localStorage.getItem("loginId"),
